@@ -112,30 +112,55 @@
             dateInput.min = tomorrow.toISOString().split('T')[0];
         }
 
-        // Handle form submission
+        // // Handle form submission
+        // function handleReservation(event) {
+        //     event.preventDefault();
+
+        //     const formData = new FormData(event.target);
+        //     const reservationData = {
+        //         name: formData.get('customerName'),
+        //         contact: formData.get('contactNumber'),
+        //         diners: formData.get('numberOfDiners'),
+        //         date: formData.get('reservationDate'),
+        //         time: formData.get('reservationTime'),
+        //         notes: formData.get('notes')
+        //     };
+
+        //     console.log('Reservation Data:', reservationData);
+        //     addReservation(reservationData);
+            
+        //     document.getElementById('successMessage').classList.add('show');
+            
+        //     setTimeout(() => {
+        //         document.getElementById('reservationForm').reset();
+        //         document.getElementById('successMessage').classList.remove('show');
+        //     }, 3000);
+        // }
+
         function handleReservation(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const formData = new FormData(event.target);
-            const reservationData = {
-                name: formData.get('customerName'),
-                contact: formData.get('contactNumber'),
-                diners: formData.get('numberOfDiners'),
-                date: formData.get('reservationDate'),
-                time: formData.get('reservationTime'),
-                notes: formData.get('notes')
-            };
+    const formData = new FormData(event.target);
+    const reservationData = {
+        name: formData.get('customerName'),
+        contact: formData.get('contactNumber'),
+        diners: formData.get('numberOfDiners'),
+        date: formData.get('reservationDate'),
+        time: formData.get('reservationTime'),
+        notes: formData.get('notes')
+    };
 
-            console.log('Reservation Data:', reservationData);
-            addReservation(reservationData);
-            
-            document.getElementById('successMessage').classList.add('show');
-            
-            setTimeout(() => {
-                document.getElementById('reservationForm').reset();
-                document.getElementById('successMessage').classList.remove('show');
-            }, 3000);
-        }
+    console.log('Reservation Data:', reservationData);
+    addReservation(reservationData);
+    console.log('Current reservations list:', reservationsList); // Debug line
+    
+    document.getElementById('successMessage').classList.add('show');
+    
+    setTimeout(() => {
+        document.getElementById('reservationForm').reset();
+        document.getElementById('successMessage').classList.remove('show');
+    }, 3000);
+}
 
         // Render menu
         function renderMenu() {
@@ -406,29 +431,79 @@ function renderTransactionHistory() {
     });
 }
 
-// Reservations Management
+// // Reservations Management
+// function addReservation(reservationData) {
+//     reservationsList.unshift({
+//         id: Date.now(),
+//         date: new Date().toLocaleString(),
+//          reservationDate: reservationData.date,
+//         ...reservationData
+//     });
+// }
+
 function addReservation(reservationData) {
-    reservationsList.unshift({
+    const newReservation = {
         id: Date.now(),
-        date: new Date().toLocaleString(),
-        ...reservationData
-    });
+        bookingDate: new Date().toLocaleString(),
+        name: reservationData.name,
+        contact: reservationData.contact,
+        diners: reservationData.diners,
+        reservationDate: reservationData.date,
+        time: reservationData.time,
+        notes: reservationData.notes || 'None'
+    };
+    
+    reservationsList.unshift(newReservation);
+    console.log('Added reservation:', newReservation);
+    console.log('Total reservations:', reservationsList.length);
 }
+
+// function renderReservationsList() {
+//     const container = document.getElementById('reservationsList');
+//     container.innerHTML = '<h3>Customer Reservations</h3>';
+    
+//     reservationsList.forEach(reservation => {
+//         const reservationDiv = document.createElement('div');
+//         reservationDiv.className = 'reservation-item';
+//         reservationDiv.innerHTML = `
+//             <div class="reservation-date">Booked: ${reservation.date}</div>
+//             <div><strong>Name:</strong> ${reservation.name}</div>
+//             <div><strong>Contact:</strong> ${reservation.contact}</div>
+//             <div><strong>Diners:</strong> ${reservation.diners}</div>
+//             <div><strong>Reservation Date:</strong> ${reservation.date} at ${reservation.time}</div>
+//             ${reservation.notes ? `<div><strong>Notes:</strong> ${reservation.notes}</div>` : ''}
+//         `;
+//         container.appendChild(reservationDiv);
+//     });
+// } old version
 
 function renderReservationsList() {
     const container = document.getElementById('reservationsList');
+    
+    if (!container) {
+        console.error('reservationsList container not found');
+        return;
+    }
+    
     container.innerHTML = '<h3>Customer Reservations</h3>';
+    
+    console.log('Rendering reservations, count:', reservationsList.length);
+    
+    if (reservationsList.length === 0) {
+        container.innerHTML += '<p style="padding: 20px; text-align: center; color: #666;">No reservations yet.</p>';
+        return;
+    }
     
     reservationsList.forEach(reservation => {
         const reservationDiv = document.createElement('div');
         reservationDiv.className = 'reservation-item';
         reservationDiv.innerHTML = `
-            <div class="reservation-date">Booked: ${reservation.date}</div>
+            <div class="reservation-date">Booked: ${reservation.bookingDate}</div>
             <div><strong>Name:</strong> ${reservation.name}</div>
             <div><strong>Contact:</strong> ${reservation.contact}</div>
             <div><strong>Diners:</strong> ${reservation.diners}</div>
-            <div><strong>Reservation Date:</strong> ${reservation.date} at ${reservation.time}</div>
-            ${reservation.notes ? `<div><strong>Notes:</strong> ${reservation.notes}</div>` : ''}
+            <div><strong>Reservation Date:</strong> ${reservation.reservationDate} at ${reservation.time}</div>
+            <div><strong>Notes:</strong> ${reservation.notes}</div>
         `;
         container.appendChild(reservationDiv);
     });
