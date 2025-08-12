@@ -57,10 +57,14 @@
             document.getElementById('loginSection').style.display = 'none';
             
             if (userType === 'customer') {
-                document.getElementById('customerName').textContent = currentUser;
-                document.getElementById('customerDashboard').style.display = 'block';
-                initializeCustomerDashboard();
-            } else {
+    document.getElementById('customerName').textContent = currentUser;
+    document.getElementById('customerLanding').style.display = 'block';
+    
+    // Initialize carousel after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        initializeCarousel();
+    }, 100);
+        } else {
                 document.getElementById('employeeName').textContent = currentUser;
                 document.getElementById('employeeDashboard').style.display = 'block';
                 initializePOS();
@@ -136,6 +140,70 @@
         //         document.getElementById('successMessage').classList.remove('show');
         //     }, 3000);
         // }
+
+// Carousel functionality - Updated
+let currentSlideIndex = 0;
+let slides = [];
+let dots = [];
+let carouselInterval;
+ function enterCustomerDashboard() {
+    stopCarousel(); // Stop the carousel when leaving landing page
+    document.getElementById('customerLanding').style.display = 'none';
+    document.getElementById('customerDashboard').style.display = 'block';
+    initializeCustomerDashboard();
+}
+function initializeCarousel() {
+    slides = document.querySelectorAll('.carousel-slide');
+    dots = document.querySelectorAll('.nav-dot');
+    
+    if (slides.length > 0) {
+        showSlide(0);
+        startCarousel();
+    }
+}
+
+function showSlide(index) {
+    if (slides.length === 0) return;
+    
+    slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+    });
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+    });
+}
+
+function changeSlide(direction) {
+    if (slides.length === 0) return;
+    
+    currentSlideIndex += direction;
+    if (currentSlideIndex >= slides.length) currentSlideIndex = 0;
+    if (currentSlideIndex < 0) currentSlideIndex = slides.length - 1;
+    showSlide(currentSlideIndex);
+}
+
+function currentSlide(index) {
+    currentSlideIndex = index - 1;
+    showSlide(currentSlideIndex);
+}
+
+function startCarousel() {
+    // Clear any existing interval
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+    }
+    
+    // Start new interval
+    carouselInterval = setInterval(() => {
+        changeSlide(1);
+    }, 5000);
+}
+
+function stopCarousel() {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+    }
+}
 
         function handleReservation(event) {
     event.preventDefault();
@@ -313,6 +381,7 @@
 
         // Logout
         function logout() {
+            stopCarousel();
             currentUser = null;
             currentUserType = null;
             selectedTable = null;
@@ -349,7 +418,7 @@ function showEmployeeTab(tabName) {
     if (tabName === 'pos') renderPOSMenu();
     if (tabName === 'inventory') renderInventory();
     if (tabName === 'history') renderTransactionHistory();
-    if (tabName === 'reservations') renderReservationsList();
+    if (tabName === 'employee-reservations') renderReservationsList();
     if (tabName === 'customerFeedback') renderEmployeeFeedback();
 }
 
@@ -478,16 +547,14 @@ function addReservation(reservationData) {
 // } old version
 
 function renderReservationsList() {
-    const container = document.getElementById('reservationsList');
+    const container = document.getElementById('employeeReservationsList');
     
     if (!container) {
-        console.error('reservationsList container not found');
+        console.error('employeeReservationsList container not found');
         return;
     }
     
     container.innerHTML = '<h3>Customer Reservations</h3>';
-    
-    console.log('Rendering reservations, count:', reservationsList.length);
     
     if (reservationsList.length === 0) {
         container.innerHTML += '<p style="padding: 20px; text-align: center; color: #666;">No reservations yet.</p>';

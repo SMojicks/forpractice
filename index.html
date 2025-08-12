@@ -67,6 +67,98 @@
             </div>
         </div>
     </div>
+    <!-- Customer Landing Page -->
+<div id="customerLanding" class="landing-page">
+    <div class="landing-header">
+        <h1>Welcome to Acaccia Bistro Cafe</h1>
+        <p>Experience the perfect blend of exceptional coffee, delicious food, and warm hospitality in our cozy atmosphere.</p>
+    </div>
+    
+    <div class="carousel-container">
+        <div class="carousel" id="cafeCarousel">
+            <!-- Slide 1 -->
+            <div class="carousel-slide active">
+    <img src="cafe pic 1.jpg" alt="Cafe Interior" onload="this.style.display='block'; this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="slide-placeholder" style="display: flex;">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
+        </svg>
+        <h3>Beautiful Interior</h3>
+        <p>Loading cafe interior image...</p>
+    </div>
+</div>
+            
+            <!-- Slide 2 -->
+            <div class="carousel-slide active">
+    <img src="cafe pic 2.jpg" alt="Cafe Interior" onload="this.style.display='block'; this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="slide-placeholder" style="display: flex;">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
+        </svg>
+        <h3>Beautiful Interior</h3>
+        <p>Loading cafe interior image...</p>
+    </div>
+</div>
+            
+            <!-- Slide 3 -->
+           <div class="carousel-slide active">
+    <img src="cafe pic 3.jpg" alt="Cafe Interior" onload="this.style.display='block'; this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="slide-placeholder" style="display: flex;">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
+        </svg>
+        <h3>Beautiful Interior</h3>
+        <p>Loading cafe interior image...</p>
+    </div>
+</div>
+            
+            <!-- Slide 4 -->
+           <div class="carousel-slide active">
+    <img src="cafe pic 4.jpg" alt="Cafe Interior" onload="this.style.display='block'; this.nextElementSibling.style.display='none';" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+    <div class="slide-placeholder" style="display: flex;">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5"/>
+        </svg>
+        <h3>Beautiful Interior</h3>
+        <p>Loading cafe interior image...</p>
+    </div>
+</div>
+            
+            <!-- Navigation arrows -->
+            <button class="carousel-arrow prev" onclick="changeSlide(-1)">‹</button>
+            <button class="carousel-arrow next" onclick="changeSlide(1)">›</button>
+            
+            <!-- Navigation dots -->
+            <div class="carousel-nav">
+                <span class="nav-dot active" onclick="currentSlide(1)"></span>
+                <span class="nav-dot" onclick="currentSlide(2)"></span>
+                <span class="nav-dot" onclick="currentSlide(3)"></span>
+                <span class="nav-dot" onclick="currentSlide(4)"></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cafe-features">
+        <div class="feature-card">
+            <h3>Premium Coffee</h3>
+            <p>Expertly crafted beverages using the finest beans from around the world, prepared by our skilled baristas.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Fresh Food</h3>
+            <p>Delicious meals and snacks made fresh daily with locally sourced ingredients and love.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Easy Reservations</h3>
+            <p>Book your table in advance and enjoy seamless service with our digital reservation system.</p>
+        </div>
+    </div>
+    
+    <div class="landing-actions">
+        <button class="enter-dashboard-btn" onclick="enterCustomerDashboard()">
+            Enter Cafe Dashboard
+        </button>
+    </div>
+</div>
 
     <!-- Customer Dashboard -->
     <div id="customerDashboard" class="main-content">
@@ -135,7 +227,7 @@
                     <form id="reservationForm">
                         <div class="form-group">
                             <label for="customerName">Name *</label>
-                            <input type="text" id="customerName" name="customerName" required>
+                            <input type="text" id="customerNameInput" name="customerName" required>
                         </div>
 
                         <div class="form-group">
@@ -210,7 +302,7 @@
     <button class="nav-tab active" onclick="showEmployeeTab('pos')">POS System</button>
     <button class="nav-tab" onclick="showEmployeeTab('inventory')">Inventory</button>
     <button class="nav-tab" onclick="showEmployeeTab('history')">Transaction History</button>
-    <button class="nav-tab" onclick="showEmployeeTab('reservations')">Reservations</button>
+    <button class="nav-tab" onclick="showEmployeeTab('employee-reservations')">Reservations</button>
     <button class="nav-tab" onclick="showEmployeeTab('customerFeedback')">Customer Feedback</button>
     <button class="nav-tab" onclick="showEmployeeTab('accountMgmt')">Account Management</button>
 </div>
@@ -262,9 +354,9 @@
 </div>
 
 <!-- Reservations -->
-<div id="reservations" class="tab-content">
+<div id="employee-reservations" class="tab-content">
     <h2>Customer Reservations</h2>
-    <div id="reservationsList"></div>
+    <div id="employeeReservationsList"></div>
 </div>
 
 <!-- Customer Feedback -->
