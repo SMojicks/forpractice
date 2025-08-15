@@ -1,10 +1,34 @@
- 
-        // Global variables
+       // Global variables
         let currentUser = null;
         let currentUserType = null;
         let selectedTable = null;
         let currentOrder = [];
         let orderTotal = 0;
+       // Development mode - set to true when working on specific sections
+const DEV_MODE = true;
+const DEV_SECTION = 'customer'; // 'customer' or 'employee'
+
+// Override default display when in dev mode
+document.addEventListener('DOMContentLoaded', function() {
+    if (DEV_MODE) {
+        document.getElementById('loginSection').style.display = 'none';
+        
+        if (DEV_SECTION === 'customer') {
+            document.getElementById('customerDashboard').style.display = 'block';
+            currentUser = 'dev-customer';
+            currentUserType = 'customer';
+            document.getElementById('customerName').textContent = currentUser;
+            initializeCustomerDashboard();
+        } else if (DEV_SECTION === 'employee') {
+            document.getElementById('employeeDashboard').style.display = 'block';
+            currentUser = 'dev-employee';
+            currentUserType = 'employee';
+            document.getElementById('employeeName').textContent = currentUser;
+            initializePOS();
+        }
+    }
+});
+        
 
         // Sample data
         const menuItems = [
@@ -96,6 +120,13 @@
             renderFeedback();
             setMinDate();
                 loadCafeImage('cafe_layout_2d.jpg');
+                initializeTableSelection(); // Add this line
+
+                // Debug - call after a delay to ensure DOM is ready
+    setTimeout(() => {
+        
+        initializeTableSelection();
+    }, 500);
             
             const form = document.getElementById('reservationForm');
             if (form) {
@@ -205,30 +236,30 @@ function stopCarousel() {
     }
 }
 
-        function handleReservation(event) {
-    event.preventDefault();
+//         function handleReservation(event) {
+//     event.preventDefault();
 
-    const formData = new FormData(event.target);
-    const reservationData = {
-        name: formData.get('customerName'),
-        contact: formData.get('contactNumber'),
-        diners: formData.get('numberOfDiners'),
-        date: formData.get('reservationDate'),
-        time: formData.get('reservationTime'),
-        notes: formData.get('notes')
-    };
+//     const formData = new FormData(event.target);
+//     const reservationData = {
+//         name: formData.get('customerName'),
+//         contact: formData.get('contactNumber'),
+//         diners: formData.get('numberOfDiners'),
+//         date: formData.get('reservationDate'),
+//         time: formData.get('reservationTime'),
+//         notes: formData.get('notes')
+//     };
 
-    console.log('Reservation Data:', reservationData);
-    addReservation(reservationData);
-    console.log('Current reservations list:', reservationsList); // Debug line
+//     console.log('Reservation Data:', reservationData);
+//     addReservation(reservationData);
+//     console.log('Current reservations list:', reservationsList); // Debug line
     
-    document.getElementById('successMessage').classList.add('show');
+//     document.getElementById('successMessage').classList.add('show');
     
-    setTimeout(() => {
-        document.getElementById('reservationForm').reset();
-        document.getElementById('successMessage').classList.remove('show');
-    }, 3000);
-}
+//     setTimeout(() => {
+//         document.getElementById('reservationForm').reset();
+//         document.getElementById('successMessage').classList.remove('show');
+//     }, 3000);
+// }
 
         // Render menu
         function renderMenu() {
@@ -514,6 +545,7 @@ function addReservation(reservationData) {
     const newReservation = {
         id: Date.now(),
         bookingDate: new Date().toLocaleString(),
+        tableNumber: reservationData.tableNumber,
         name: reservationData.name,
         contact: reservationData.contact,
         diners: reservationData.diners,
@@ -524,7 +556,6 @@ function addReservation(reservationData) {
     
     reservationsList.unshift(newReservation);
     console.log('Added reservation:', newReservation);
-    console.log('Total reservations:', reservationsList.length);
 }
 
 // function renderReservationsList() {
@@ -561,19 +592,20 @@ function renderReservationsList() {
         return;
     }
     
-    reservationsList.forEach(reservation => {
-        const reservationDiv = document.createElement('div');
-        reservationDiv.className = 'reservation-item';
-        reservationDiv.innerHTML = `
-            <div class="reservation-date">Booked: ${reservation.bookingDate}</div>
-            <div><strong>Name:</strong> ${reservation.name}</div>
-            <div><strong>Contact:</strong> ${reservation.contact}</div>
-            <div><strong>Diners:</strong> ${reservation.diners}</div>
-            <div><strong>Reservation Date:</strong> ${reservation.reservationDate} at ${reservation.time}</div>
-            <div><strong>Notes:</strong> ${reservation.notes}</div>
-        `;
-        container.appendChild(reservationDiv);
-    });
+  reservationsList.forEach(reservation => {
+    const reservationDiv = document.createElement('div');
+    reservationDiv.className = 'reservation-item';
+    reservationDiv.innerHTML = `
+        <div class="reservation-date">Booked: ${reservation.bookingDate}</div>
+        <div><strong>Table Number:</strong> ${reservation.tableNumber}</div>
+        <div><strong>Name:</strong> ${reservation.name}</div>
+        <div><strong>Contact:</strong> ${reservation.contact}</div>
+        <div><strong>Diners:</strong> ${reservation.diners}</div>
+        <div><strong>Reservation Date:</strong> ${reservation.reservationDate} at ${reservation.time}</div>
+        <div><strong>Notes:</strong> ${reservation.notes}</div>
+    `;
+    container.appendChild(reservationDiv);
+});
 }
 
 // Employee Feedback View
@@ -622,4 +654,124 @@ function updateAccountStats() {
     document.getElementById('totalTransactions').textContent = transactionHistory.length;
     document.getElementById('totalRevenue').textContent = transactionHistory.reduce((sum, t) => sum + t.total, 0).toFixed(2);
     document.getElementById('totalInventoryItems').textContent = inventoryItems.length;
+}
+
+// Table selection variables (MOVE THIS TO TOP OF FILE)
+let selectedTableId = null;
+let occupiedTables = [];
+
+// Initialize table selection
+function initializeTableSelection() {
+    console.log('Initializing table selection...'); // Debug log
+    const tableSpots = document.querySelectorAll('.table-spot');
+    console.log('Found table spots:', tableSpots.length); // Debug log
+    
+    tableSpots.forEach(spot => {
+        const tableId = spot.getAttribute('data-id');
+        console.log('Setting up table:', tableId); // Debug log
+        
+        // Set initial state
+        if (occupiedTables.includes(tableId)) {
+            spot.classList.add('occupied');
+        } else {
+            spot.classList.add('available');
+        }
+        
+        // Add click event
+        spot.addEventListener('click', function() {
+            console.log('Table clicked:', tableId); // Debug log
+            selectTable(tableId, spot);
+        });
+    });
+}
+
+function selectTable(tableId, spotElement) {
+    console.log('Selecting table:', tableId); // Debug log
+    
+    // Don't allow selection of occupied tables
+    if (spotElement.classList.contains('occupied')) {
+        alert('This table is already occupied. Please select another table.');
+        return;
+    }
+    
+    // Remove previous selection
+    document.querySelectorAll('.table-spot.selected').forEach(spot => {
+        spot.classList.remove('selected');
+        spot.classList.add('available');
+    });
+    
+    // Select new table
+    selectedTableId = tableId;
+    spotElement.classList.remove('available');
+    spotElement.classList.add('selected');
+    
+    // Update UI
+    updateSelectedTableInfo(tableId);
+}
+
+function updateSelectedTableInfo(tableId) {
+    const selectedTableInfo = document.getElementById('selectedTableInfo');
+    const selectedTableNumber = document.getElementById('selectedTableNumber');
+    
+    if (selectedTableNumber) {
+        selectedTableNumber.textContent = tableId;
+    }
+    
+    selectedTableInfo.classList.add('show');
+}
+
+function updateTableStatus(tableId, status) {
+    const tableSpot = document.querySelector(`.table-spot[data-id="${tableId}"]`);
+    if (tableSpot) {
+        tableSpot.classList.remove('available', 'selected', 'occupied');
+        tableSpot.classList.add(status);
+    }
+}
+
+// Update the handleReservation function (REPLACE THE EXISTING ONE)
+function handleReservation(event) {
+    event.preventDefault();
+
+    // Check if table is selected
+    if (!selectedTableId) {
+        alert('Please select a table before making a reservation.');
+        return;
+    }
+
+    const formData = new FormData(event.target);
+    const reservationData = {
+        tableNumber: selectedTableId,
+        name: formData.get('customerName'),
+        contact: formData.get('contactNumber'),
+        diners: formData.get('numberOfDiners'),
+        date: formData.get('reservationDate'),
+        time: formData.get('reservationTime'),
+        notes: formData.get('notes')
+    };
+
+    console.log('Reservation Data:', reservationData);
+    addReservation(reservationData);
+    
+    // Mark table as occupied
+    occupiedTables.push(selectedTableId);
+    updateTableStatus(selectedTableId, 'occupied');
+    
+    document.getElementById('successMessage').classList.add('show');
+    
+    setTimeout(() => {
+        document.getElementById('reservationForm').reset();
+        document.getElementById('successMessage').classList.remove('show');
+        document.getElementById('selectedTableInfo').classList.remove('show');
+        selectedTableId = null;
+    }, 3000);
+    function debugTableSpots() {
+    console.log('=== DEBUG TABLE SPOTS ===');
+    const container = document.getElementById('tableOverlays');
+    console.log('Table overlays container:', container);
+    const spots = document.querySelectorAll('.table-spot');
+    console.log('Number of table spots found:', spots.length);
+    spots.forEach((spot, index) => {
+        console.log(`Spot ${index}:`, spot, 'data-id:', spot.getAttribute('data-id'));
+    });
+}
 }
