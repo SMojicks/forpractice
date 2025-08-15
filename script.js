@@ -4,30 +4,7 @@
         let selectedTable = null;
         let currentOrder = [];
         let orderTotal = 0;
-       // Development mode - set to true when working on specific sections
-const DEV_MODE = true;
-const DEV_SECTION = 'customer'; // 'customer' or 'employee'
 
-// Override default display when in dev mode
-document.addEventListener('DOMContentLoaded', function() {
-    if (DEV_MODE) {
-        document.getElementById('loginSection').style.display = 'none';
-        
-        if (DEV_SECTION === 'customer') {
-            document.getElementById('customerDashboard').style.display = 'block';
-            currentUser = 'dev-customer';
-            currentUserType = 'customer';
-            document.getElementById('customerName').textContent = currentUser;
-            initializeCustomerDashboard();
-        } else if (DEV_SECTION === 'employee') {
-            document.getElementById('employeeDashboard').style.display = 'block';
-            currentUser = 'dev-employee';
-            currentUserType = 'employee';
-            document.getElementById('employeeName').textContent = currentUser;
-            initializePOS();
-        }
-    }
-});
         
 
         // Sample data

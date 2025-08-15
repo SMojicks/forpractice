@@ -8,7 +8,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: 
-                linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%),
+                linear-gradient(135deg, rgba(33, 82, 0, 0.8) 0%, rgba(68, 56, 1, 0.795) 100%),
                 url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat fixed;
             min-height: 100vh;
             color: #333;
@@ -569,7 +569,7 @@
 .landing-page {
     display: none;
     background: 
-        linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%),
+        linear-gradient(135deg, rgba(33, 82, 0, 0.8) 0%, rgba(68, 56, 1, 0.795) 100%),
         url('BACKGROUND_IMAGE_URL_HERE') center/cover no-repeat fixed;
     min-height: 100vh;
     color: white;
