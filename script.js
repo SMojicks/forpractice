@@ -5,7 +5,30 @@
         let currentOrder = [];
         let orderTotal = 0;
 
+        // Development mode - set to true when working on specific sections
+const DEV_MODE = true;
+const DEV_SECTION = 'customer'; // 'customer' or 'employee'
+
+// Override default display when in dev mode
+document.addEventListener('DOMContentLoaded', function() {
+    if (DEV_MODE) {
+        document.getElementById('loginSection').style.display = 'none';
         
+        if (DEV_SECTION === 'customer') {
+            document.getElementById('customerDashboard').style.display = 'block';
+            currentUser = 'dev-customer';
+            currentUserType = 'customer';
+            document.getElementById('customerName').textContent = currentUser;
+            initializeCustomerDashboard();
+        } else if (DEV_SECTION === 'employee') {
+            document.getElementById('employeeDashboard').style.display = 'block';
+            currentUser = 'dev-employee';
+            currentUserType = 'employee';
+            document.getElementById('employeeName').textContent = currentUser;
+            initializePOS();
+        }
+    }
+});
 
         // Sample data
         const menuItems = [
@@ -94,9 +117,9 @@
         // Initialize customer dashboard
         function initializeCustomerDashboard() {
             renderMenu();
-            renderFeedback();
+            // renderFeedback();
             setMinDate();
-                loadCafeImage('cafe_layout_2d.jpg');
+                loadCafeImage('cafe_layout_2d_real.png');
                 initializeTableSelection(); // Add this line
 
                 // Debug - call after a delay to ensure DOM is ready
@@ -256,37 +279,50 @@ function stopCarousel() {
         }
 
         // Render feedback
-        function renderFeedback() {
-            const feedbackContainer = document.getElementById('feedbackList');
-            feedbackContainer.innerHTML = '<h3>Customer Reviews</h3>';
-            
-            feedbackList.forEach(feedback => {
-                const feedbackItem = document.createElement('div');
-                feedbackItem.className = 'feedback-item';
-                feedbackItem.innerHTML = `
-                    <div class="feedback-author">${feedback.author}</div>
-                    <div class="feedback-date">${feedback.date}</div>
-                    <div>${feedback.content}</div>
-                `;
-                feedbackContainer.appendChild(feedbackItem);
-            });
-        }
-
-        // Submit feedback
-        function submitFeedback() {
-            const feedbackText = document.getElementById('feedbackText').value.trim();
-            if (feedbackText) {
-                const newFeedback = {
-                    author: currentUser,
-                    date: new Date().toISOString().split('T')[0],
-                    content: feedbackText
-                };
-                feedbackList.unshift(newFeedback);
-                document.getElementById('feedbackText').value = '';
-                renderFeedback();
-                alert('Thank you for your feedback!');
-            }
-        }
+//         function renderFeedback() {
+//     const feedbackContainer = document.getElementById('feedbackList');
+//     feedbackContainer.innerHTML = '<h3>Community Reviews & Photos</h3>';
+    
+//     feedbackList.forEach(feedback => {
+//         const feedbackItem = document.createElement('div');
+        
+//         if (feedback.hasPhoto) {
+//             feedbackItem.className = 'feedback-item with-photo';
+//             feedbackItem.innerHTML = `
+//                 <img src="${feedback.photo}" alt="Customer photo" class="feedback-photo">
+//                 <div class="feedback-content">
+//                     <div class="feedback-author">${feedback.author} 📸</div>
+//                     <div class="feedback-date">${feedback.date}</div>
+//                     <div class="feedback-text">${feedback.content}</div>
+//                 </div>
+//             `;
+//         } else {
+//             feedbackItem.className = 'feedback-item';
+//             feedbackItem.innerHTML = `
+//                 <div class="feedback-author">${feedback.author}</div>
+//                 <div class="feedback-date">${feedback.date}</div>
+//                 <div class="feedback-text">${feedback.content}</div>
+//             `;
+//         }
+        
+//         feedbackContainer.appendChild(feedbackItem);
+//     });
+// }
+//         // Submit feedback
+//         function submitFeedback() {
+//             const feedbackText = document.getElementById('feedbackText').value.trim();
+//             if (feedbackText) {
+//                 const newFeedback = {
+//                     author: currentUser,
+//                     date: new Date().toISOString().split('T')[0],
+//                     content: feedbackText
+//                 };
+//                 feedbackList.unshift(newFeedback);
+//                 document.getElementById('feedbackText').value = '';
+//                 renderFeedback();
+//                 alert('Thank you for your feedback!');
+//             }
+//         }
 
         // Initialize POS
         function initializePOS() {
@@ -751,4 +787,246 @@ function handleReservation(event) {
         console.log(`Spot ${index}:`, spot, 'data-id:', spot.getAttribute('data-id'));
     });
 }
+}
+let selectedSpot = null;
+let bulletinPhotos = {}; // Store photos for each spot
+
+// Function to show bulletin board placeholder when image fails to load
+function showBulletinPlaceholder() {
+    document.getElementById('bulletinBoardImage').style.display = 'none';
+    document.getElementById('bulletinPlaceholder').style.display = 'block';
+}
+
+// Function to load bulletin board image when URL is provided
+function loadBulletinImage(imageUrl) {
+    const img = document.getElementById('bulletinBoardImage');
+    const placeholder = document.getElementById('bulletinPlaceholder');
+    
+    img.src = imageUrl;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    
+    img.onerror = showBulletinPlaceholder;
+}
+
+// Open photo upload modal for specific spot
+function openPhotoModal(spotNumber) {
+    selectedSpot = spotNumber;
+    document.getElementById('photoModal').style.display = 'block';
+    
+    // Clear previous form data
+    document.getElementById('photoSubmissionForm').reset();
+    document.getElementById('modalPhotoPreview').style.display = 'none';
+    
+    // Pre-fill user name if available
+    if (currentUser) {
+        document.getElementById('modalUserName').value = currentUser;
+    }
+}
+
+// Close photo upload modal
+function closePhotoModal() {
+    document.getElementById('photoModal').style.display = 'none';
+    selectedSpot = null;
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('photoModal');
+    if (event.target === modal) {
+        closePhotoModal();
+    }
+}
+
+// Preview uploaded photo in modal
+function previewModalPhoto(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('modalPhotoPreview');
+    
+    if (file) {
+        // Check file size (limit to 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Please choose an image smaller than 5MB.');
+            event.target.value = '';
+            preview.style.display = 'none';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Submit photo to bulletin board
+function submitPhotoToBulletin(event) {
+    event.preventDefault();
+    
+    if (!selectedSpot) {
+        alert('Error: No spot selected.');
+        return;
+    }
+    
+    const photoInput = document.getElementById('modalPhotoInput');
+    const reviewText = document.getElementById('modalReviewText').value.trim();
+    const userName = document.getElementById('modalUserName').value.trim();
+    
+    if (!photoInput.files[0]) {
+        alert('Please select a photo to upload.');
+        return;
+    }
+    
+    if (!reviewText) {
+        alert('Please write a review to go with your photo.');
+        return;
+    }
+    
+    if (!userName) {
+        alert('Please enter your name.');
+        return;
+    }
+    
+    // Process the image
+    const file = photoInput.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        // Store the photo data
+        bulletinPhotos[selectedSpot] = {
+            image: e.target.result,
+            author: userName,
+            review: reviewText,
+            date: new Date().toLocaleDateString()
+        };
+        
+        // Update the visual spot
+        updatePhotoSpot(selectedSpot, bulletinPhotos[selectedSpot]);
+        
+        // Close modal
+        closePhotoModal();
+        
+        // Show success message
+        showSuccessMessage('Your photo has been pinned to the bulletin board!');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+// Update photo spot with submitted photo
+function updatePhotoSpot(spotNumber, photoData) {
+    const spot = document.getElementById(`spot${spotNumber}`);
+    
+    if (spot) {
+        spot.classList.add('filled');
+        
+        // Create the photo content
+        spot.innerHTML = `
+            <div class="photo-placeholder-spot">
+                <img src="${photoData.image}" alt="Community photo" class="submitted-photo">
+                <div class="photo-author">📝 ${photoData.author}</div>
+            </div>
+        `;
+        
+        // Add click event to view full photo and review
+        spot.onclick = function() {
+            viewPhotoDetails(spotNumber);
+        };
+    }
+}
+
+// View photo details in modal
+function viewPhotoDetails(spotNumber) {
+    const photoData = bulletinPhotos[spotNumber];
+    
+    if (!photoData) return;
+    
+    // Create a view-only modal
+    const modal = document.createElement('div');
+    modal.className = 'photo-modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📸 ${photoData.author}'s Experience</h3>
+                <button class="modal-close" onclick="this.closest('.photo-modal').remove()">&times;</button>
+            </div>
+            <div style="padding: 25px 30px 30px;">
+                <img src="${photoData.image}" alt="Community photo" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; margin-bottom: 20px;">
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h4 style="margin: 0 0 10px 0; color: #667eea;">Review:</h4>
+                    <p style="margin: 0; line-height: 1.6;">${photoData.review}</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">Shared on ${photoData.date}</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close when clicking outside
+    modal.onclick = function(event) {
+        if (event.target === modal) {
+            modal.remove();
+        }
+    };
+}
+
+// Show success message
+function showSuccessMessage(message) {
+    // Create success notification
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        z-index: 1001;
+        font-weight: bold;
+        animation: slideInRight 0.5s ease-out;
+    `;
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.2rem;">✅</span>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add animation CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideInRight 0.5s ease-out reverse';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 500);
+    }, 3000);
+}
+
+// Initialize bulletin board (call this when customer dashboard loads)
+function initializeBulletinBoard() {
+    // You can pre-load some sample photos here if needed
+    // For now, all spots start empty
+    console.log('Bulletin board initialized');
 }

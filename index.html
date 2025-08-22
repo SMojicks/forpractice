@@ -181,7 +181,7 @@
                     <h2>Cafe Floor Plan</h2>
                     <div class="cafe-layout">
                         <div class="cafe-image-container" id="cafeImageContainer">
-    <img src='cafe_layout_2d.jpg' alt="Cafe Floor Plan" class="cafe-image" id="cafeImage" onload="this.style.display='block'; document.getElementById('imagePlaceholder').style.display='none';" onerror="showPlaceholder()">
+    <img src='cafe_layout_2d_real.png' alt="Cafe Floor Plan" class="cafe-image" id="cafeImage" onload="this.style.display='block'; document.getElementById('imagePlaceholder').style.display='none';" onerror="showPlaceholder()">
     
     <!-- Placeholder shown when no image or image fails to load -->
     <div class="image-placeholder" id="imagePlaceholder">
@@ -194,13 +194,20 @@
     
     <!-- Table overlays -->
     <div class="table-overlays" id="tableOverlays">
-        <div class="table-spot" data-id="1" style="top: 17%; left: 25%;"></div>
-        <div class="table-spot" data-id="2" style="top: 40%; left: 25%;"></div>
-        
-        <div class="table-spot" data-id="3" style="top: 65%; left: 25%;"></div>
+        <div class="table-spot" data-id="1" style="top: 25%; left: 10%;"></div>
+        <div class="table-spot" data-id="2" style="top: 23%; left: 38%;"></div>
+        <div class="table-spot" data-id="3" style="top: 26%; left: 89%;"></div>
+        <div class="table-spot" data-id="4" style="top: 60%; left: 13%;"></div>
+        <div class="table-spot" data-id="5" style="top: 54%; left: 32%;"></div>
+        <div class="table-spot" data-id="6" style="top: 54%; left: 50%;"></div>
+        <div class="table-spot" data-id="7" style="top: 82%; left: 6%;"></div>
+        <div class="table-spot" data-id="8" style="top: 82%; left: 32%;"></div>
+        <div class="table-spot" data-id="9" style="top: 80%; left:50%;"></div>
+        <div class="table-spot" data-id="10" style="top: 60%; left: 90%;"></div>
+        <div class="table-spot" data-id="11" style="top: 78%; left: 90%;"></div>
         
     </div>
-</div> <!-- Make sure this closing div is here -->
+</div>
                         
                         <div class="legend">
                             <div class="legend-item">
@@ -208,11 +215,11 @@
                                 <span>Available Tables</span>
                             </div>
                             <div class="legend-item">
-                                <div class="legend-color" style="background: linear-gradient(45deg, #FF6B6B, #FF8E53);"></div>
+                                <div class="legend-color" style="background: linear-gradient(45deg, #df0404, #FF8E53);"></div>
                                 <span>Occupied Tables</span>
                             </div>
                             <div class="legend-item">
-                                <div class="legend-color" style="background: linear-gradient(45deg, #667eea, #764ba2);"></div>
+                                <div class="legend-color" style="background: linear-gradient(45deg, #04ec23, #764ba2);"></div>
                                 <span>Your Selection</span>
                             </div>
                         </div>
@@ -288,17 +295,139 @@
             <div class="menu-grid" id="menuGrid"></div>
         </div>
 
-        <!-- Feedback Tab -->
-        <div id="feedback" class="tab-content">
-            <h2>Community Feedback</h2>
-            <div class="feedback-form">
-                <h3>Share Your Experience</h3>
-                <textarea id="feedbackText" placeholder="Tell us about your experience at Brewed Bliss Cafe..."></textarea>
-                <button class="submit-btn" onclick="submitFeedback()" style="margin-top: 15px;">Submit Feedback</button>
+        <!-- REPLACE THE ENTIRE FEEDBACK TAB CONTENT IN index.html -->
+
+<!-- Feedback Tab -->
+<div id="feedback" class="tab-content">
+    <h2>Community Bulletin Board</h2>
+    
+    <!-- Centered Large Bulletin Board -->
+    <div class="bulletin-board-main">
+        <div class="bulletin-board-container-large" id="bulletinBoardContainer">
+            <img src="bulletin_board_bg.png" alt="Cafe Bulletin Board" class="bulletin-board-image" id="bulletinBoardImage" 
+                 onload="this.style.display='block'; document.getElementById('bulletinPlaceholder').style.display='none';" 
+                 onerror="showBulletinPlaceholder()">
+            
+            <!-- Placeholder shown when no image or image fails to load -->
+            <div class="bulletin-placeholder" id="bulletinPlaceholder">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-1 16H9V7h9v14z"/>
+                </svg>
+                <h3>Community Bulletin Board</h3>
+                <p>Share your cafe experiences and photos here!</p>
+                <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">Your submitted photos will appear as pinned notes on this board</p>
             </div>
-            <div class="feedback-list" id="feedbackList"></div>
+            
+            <!-- Invisible photo spots that will show user submissions -->
+            <div class="photo-spots" id="photoSpots">
+                <!-- Photo Spot 1 - Top Left -->
+                <div class="photo-spot" id="spot1" style="top: 15%; left: 12%; transform: rotate(-8deg);" onclick="openPhotoModal(1)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+                
+                <!-- Photo Spot 2 - Top Right -->
+                <div class="photo-spot" id="spot2" style="top: 10%; right: 15%; transform: rotate(5deg);" onclick="openPhotoModal(2)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+                
+                <!-- Photo Spot 3 - Center Left -->
+                <div class="photo-spot" id="spot3" style="top: 35%; left: 8%; transform: rotate(12deg);" onclick="openPhotoModal(3)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+                
+                <!-- Photo Spot 4 - Center -->
+                <div class="photo-spot" id="spot4" style="top: 45%; left: 50%; transform: translate(-50%, -50%) rotate(-3deg);" onclick="openPhotoModal(4)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+                
+                <!-- Photo Spot 5 - Center Right -->
+                <div class="photo-spot" id="spot5" style="top: 30%; right: 10%; transform: rotate(-7deg);" onclick="openPhotoModal(5)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+                
+                <!-- Photo Spot 6 - Bottom Left -->
+                <div class="photo-spot" id="spot6" style="bottom: 20%; left: 15%; transform: rotate(4deg);" onclick="openPhotoModal(6)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+                
+                <!-- Photo Spot 7 - Bottom Right -->
+                <div class="photo-spot" id="spot7" style="bottom: 15%; right: 12%; transform: rotate(-5deg);" onclick="openPhotoModal(7)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+                
+                <!-- Photo Spot 8 - Bottom Center -->
+                <div class="photo-spot" id="spot8" style="bottom: 25%; left: 45%; transform: rotate(8deg);" onclick="openPhotoModal(8)">
+                    <div class="photo-placeholder-spot">
+                        <span>📷</span>
+                        <p>Click to add photo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Instructions -->
+        <div class="bulletin-instructions">
+            <p>🖼️ Click on any empty spot to add your photo and review!</p>
+            <p>📌 Share your cafe moments with the community</p>
         </div>
     </div>
+    
+    <!-- Photo Upload Modal -->
+    <div class="photo-modal" id="photoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📸 Share Your Cafe Experience</h3>
+                <button class="modal-close" onclick="closePhotoModal()">&times;</button>
+            </div>
+            
+            <form id="photoSubmissionForm" onsubmit="submitPhotoToBulletin(event)">
+                <div class="form-group">
+                    <label for="modalPhotoInput">Choose Your Photo:</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="modalPhotoInput" class="file-input" accept="image/*" onchange="previewModalPhoto(event)" required>
+                        <label for="modalPhotoInput" class="file-input-label">
+                            📷 Select Photo
+                        </label>
+                        <img id="modalPhotoPreview" class="photo-preview-modal" alt="Photo preview">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modalReviewText">Your Review:</label>
+                    <textarea id="modalReviewText" placeholder="Share your experience at Acaccia Bistro Cafe..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modalUserName">Your Name:</label>
+                    <input type="text" id="modalUserName" placeholder="How should we credit you?" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Pin to Bulletin Board</button>
+            </form>
+        </div>
+    </div>
+</div>
 
     <!-- Employee Dashboard -->
     <div id="employeeDashboard" class="main-content">
